@@ -2,6 +2,7 @@ from main import logger
 import os
 import json
 
+
 records = {
     "volcano_1": {},
     "volcano_2": {},
@@ -24,13 +25,8 @@ def process_all_records():
         path = base_path + f"Volcano{volcano_id}/observation{observ_id}.txt"
         try:
             assert(os.path.exists(path))
-            # logger.info(f"Found file: {os.path.abspath(path)}")
             volcano_key = f"volcano_{volcano_id}"
-            # records.setdefault(f"volcano_{volcano_id}", {}) # TODO refactor later to only define when initializing or updating volcano_id
             records[volcano_key][f"observation{observ_id}"] = process_one_record(path, volcano_id, observ_id)
-            # = {
-            #     f"observation_{observ_id}": process_one_record(path, volcano_id, observ_id)
-            # }
             observ_id += 1
         except Exception as e:
             logger.error(e)
