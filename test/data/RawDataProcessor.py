@@ -42,15 +42,31 @@ def process_all_records():
 
 
 def process_one_record(path, volcano_id, observ_id):
-    result = {"id": f"V{volcano_id}-Ob{observ_id}"}
+    record = {"id": f"V{volcano_id}-Ob{observ_id}"}
     with open(path, "r") as file:
         for _ in range(13):
             line = file.readline().strip()
             if line:
                 values = line.split(",")
-                result[values[0]] = values[1]
-    assert(len(result) == 12)
-    return result
+                record[values[0]] = values[1]
+    assert(len(record) == 12)
+    tilt_erupt = record["tilt_erupt"].replace("nrad", "")
+    record["tilt_erupt"] = float(tilt_erupt)
+    evaluate_exponents(record)
+    convert_to_float(record)
+    return record
+
+
+def evaluate_exponents(record):
+    for key in ["G", "mu", "M"]:
+        value = record[key].split("^")
+        value = float(value[0]) ** float(value[1])
+        record[key] = value
+
+
+def convert_to_float(record):
+    for key in ["v", "Patm", "g", "r", "G", "rho", "rc", "sigma"]:
+        record[key] = float(record[key])
 
 
 if __name__ == "__main__":
